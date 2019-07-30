@@ -16,9 +16,17 @@ find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(pendulum_msgs
-  "msg/Hands.msg"
-  "msg/HandInfo.msg"
-  DEPENDENCIES builtin_interfaces
+    "msg/FaceInfo.msg"
+    "msg/Faces.msg"
+    "msg/GestureInfo.msg"
+    "msg/Gestures.msg"
+    "msg/HandInfo.msg"
+    "msg/Hands.msg"
+    "msg/JointInfo.msg"
+    "msg/SkeletonInfo.msg"
+    "msg/Skeletons.msg"
+    #"srv/suspend.srv" # Doesn't compile for some reason
+    DEPENDENCIES builtin_interfaces
 )
 
 ament_package()
