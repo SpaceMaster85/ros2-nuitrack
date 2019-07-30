@@ -7,6 +7,7 @@
 #include "std_msgs/msg/string.hpp"
 #include <nuitrack/Nuitrack.h>
 #include "nuitrack_msgs/msg/hands.hpp"
+#include "nuitrack_msgs/msg/hand_info.hpp"
 
 
 using namespace std::chrono_literals;
@@ -16,7 +17,7 @@ using namespace tdv::nuitrack;
 class MinimalPublisher : public rclcpp::Node
 {
     public:
-        MinimalPublisher() : Node("minimal_publisher"), count_(0)
+        MinimalPublisher() : Node("nuitrack_app"), count_(0)
     {
 
         try {
@@ -34,7 +35,8 @@ class MinimalPublisher : public rclcpp::Node
             std::cerr << "Can not start Nuitrack (ExceptionType: " << e.type() << ")" << std::endl;
         }
 
-        publisher_ = this->create_publisher<std_msgs::msg::String>("topic");
+        publisher_ = this->create_publisher<nuitrack_msgs::msg::HandInfo>("HandInfo");
+        hand_publisher_ = this->create_publisher<nuitrack_msgs::msg::Hands>("Hands");
         timer_ = this->create_wall_timer(
                 30ms, std::bind(&MinimalPublisher::nuitrackTimerCallback, this));
     }
@@ -77,15 +79,23 @@ class MinimalPublisher : public rclcpp::Node
                 "x = " << rightHand->xReal << ", "
                 "y = " << rightHand->yReal << ", "
                 "z = " << rightHand->zReal << std::endl;
-            auto message = std_msgs::msg::String();
-            message.data = "Hand seen! " + std::to_string(count_++);
+
+            // HANDINFO publisher
+            auto message = nuitrack_msgs::msg::HandInfo();
+            message.id = 1;
             //RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
             publisher_->publish(message);
+
+            // HANDS publisher
+            auto message2 = nuitrack_msgs::msg::Hands();
+            message2.hands.push_back(message);
+            hand_publisher_->publish(message2);
         }
 
     private:
         rclcpp::TimerBase::SharedPtr timer_;
-        rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+        rclcpp::Publisher<nuitrack_msgs::msg::HandInfo>::SharedPtr publisher_;
+        rclcpp::Publisher<nuitrack_msgs::msg::Hands>::SharedPtr hand_publisher_;
         tdv::nuitrack::HandTracker::Ptr handTracker;
         size_t count_;
 };
