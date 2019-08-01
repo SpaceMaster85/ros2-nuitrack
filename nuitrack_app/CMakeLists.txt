@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.5)
 project(nuitrack_app)
 
+###
+# Modify for your system
+# Download the SDK from here: 
+#   https://nuitrack.com/
+set(NUITRACK_SDK_INCLUDE_DIR ~/Developer/libs/Nuitrack/include)
+###
+
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
@@ -23,7 +30,7 @@ find_package(nuitrack_msgs REQUIRED)
 
 include_directories(
   ./include
-  ~/Developer/libs/Nuitrack/include/  
+  ${NUITRACK_SDK_INCLUDE_DIR}
 )
 link_directories("/usr/local/lib/nuitrack")
 
