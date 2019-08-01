@@ -39,12 +39,12 @@ class MinimalPublisher : public rclcpp::Node
         tdv::nuitrack::Nuitrack::setConfigValue( "DepthProvider.Depth2ColorRegistration", "true" );
 
         // Create Hand
-        handTracker = HandTracker::create();
-        handTracker->connectOnUpdate(std::bind(&MinimalPublisher::onHandUpdate, this, std::placeholders::_1));
+        handTracker_ = HandTracker::create();
+        handTracker_->connectOnUpdate(std::bind(&MinimalPublisher::onHandUpdate, this, std::placeholders::_1));
 
         // Create Skeleton
-        skeletonTracker = tdv::nuitrack::SkeletonTracker::create();
-        skeletonTracker->connectOnUpdate(std::bind(&MinimalPublisher::onSkeletonUpdate, this, std::placeholders::_1));
+        skeletonTracker_ = tdv::nuitrack::SkeletonTracker::create();
+        skeletonTracker_->connectOnUpdate(std::bind(&MinimalPublisher::onSkeletonUpdate, this, std::placeholders::_1));
 
         // Start Nuitrack
         try {
@@ -53,9 +53,9 @@ class MinimalPublisher : public rclcpp::Node
             std::cerr << "Can not start Nuitrack (ExceptionType: " << e.type() << ")" << std::endl;
         }
 
-        facePublisher_ = this->create_publisher<nuitrack_msgs::msg::Faces>("Faces");
-        handPublisher_ = this->create_publisher<nuitrack_msgs::msg::Hands>("Hands");
-        skeletonPublisher_ = this->create_publisher<nuitrack_msgs::msg::Skeletons>("Skeletons");
+        facePublisher_ = this->create_publisher<nuitrack_msgs::msg::Faces>("nuitrack/faces");
+        handPublisher_ = this->create_publisher<nuitrack_msgs::msg::Hands>("nuitrack/hands");
+        skeletonPublisher_ = this->create_publisher<nuitrack_msgs::msg::Skeletons>("nuitrack/skeletons");
         timer_ = this->create_wall_timer(
                 30ms, std::bind(&MinimalPublisher::nuitrackTimerCallback, this));
     }
@@ -192,11 +192,11 @@ class MinimalPublisher : public rclcpp::Node
         rclcpp::Publisher<nuitrack_msgs::msg::Skeletons>::SharedPtr skeletonPublisher_;
 
         // Nuitrack objects that have associated callbacks
-        tdv::nuitrack::HandTracker::Ptr handTracker;
-        tdv::nuitrack::SkeletonTracker::Ptr skeletonTracker;
-       // face update is done in in nuitrackTimerCallback at a standard rate specified by face_frame_rate
+        tdv::nuitrack::HandTracker::Ptr handTracker_;
+        tdv::nuitrack::SkeletonTracker::Ptr skeletonTracker_;
+        // face update is done in in nuitrackTimerCallback at a standard rate specified by face_frame_rate
 
-        // Param
+        // Params
         double face_frame_rate = 2;
         size_t count_;
 };
