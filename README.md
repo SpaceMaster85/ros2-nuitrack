@@ -1,7 +1,11 @@
 README
 ======
+A ROS2 publisher for Nuitrack pose tracking. 
 
-A ROS2 publisher for Nuitrack pose tracking.  Currently this has been tested on Ubuntu 18.04 with ROS2 Dashing with the Intel Realsense D435. This README will become more detailed as I set things up on additional computers.
+This is a fork of the original package. The original package was for ROS2 Dashing and is outdated. 
+
+The actual version has been tested on Ubuntu 20.04 with ROS2 FOXY with the Intel Realsense D435. It also forwards the Pointcloud and RGB images as rostopics
+
 
 Setup
 -----
@@ -9,7 +13,7 @@ Setup
 This installation process is dicey.  I was able to set up the Nuitrack on an Intel NUC, twice, but not on a Lenovo laptop.  For questions, the most useful resource is probably [Nuitrack's community forums](https://community.nuitrack.com/).
 
 1. Things you'll need:
-    - Windows PC that is strong enough to run Unity
+    - Linux PC
     - Intel Realsense d435
     - A Nuitrack license (free version will work, but you still have to have them email it to you, can take 20 minutes or so), which you can get [here](https://nuitrack.com/)
 2. Follow Nuitrack install instructions [here](http://download.3divi.com/Nuitrack/doc/Installation_page.html#install_ubuntu_sec), note that there are notes on their instructions below:
@@ -20,10 +24,6 @@ This installation process is dicey.  I was able to set up the Nuitrack on an Int
         then install Nuitrack
 
             sudo dpkg -i <nuitrack package>
-
-    - For ubuntu 18.04, install libpng12-0 - it's hidden on this page (click `security.ubuntu.com/ubuntu`)
-
-        [Ubuntu - Package Download Selection -- libpng12-0_1.2.54-1ubuntu1.1_amd64.deb](https://packages.ubuntu.com/xenial/amd64/libpng12-0/download)
 
     - Make sure that `NUITRACK_HOME` and `LD_LIBRARY_PATH` include your a path to Nuitrack.  It tells you to put them in a script in `init.d`, this hasn't worked for me; just put them at the end of your `~/.bashrc` (or `~/.zshrc` if you use zsh).
 
@@ -48,9 +48,18 @@ This installation process is dicey.  I was able to set up the Nuitrack on an Int
             cd build
             cmake ..
             make
-            ./nuitrack_console_sample
+            nuitrack
 
-6. That's it!  Nuitrack works!  Now, you just need to link to the includes directory in the SDK to build a project that uses Nuitrack.
+6. You should see now the nuitrack demo application
+
+If not and you get an error regarding the library path try this:
+
+        echo 'export NUITRACK_HOME=/usr/etc/nuitrack' | sudo tee -a /etc/profile.d/nuitrack_env.sh
+        echo 'export LD_LIBRARY_PATH=/usr/local/lib/nuitrack' | sudo tee -a /etc/profile.d/nuitrack_env.sh
+        . /etc/profile.d/nuitrack_env.sh
+
+
+7. That's it!  Now Nuitrack should work!  Now, you just need to link to the includes directory in the SDK to build a project that uses Nuitrack.
 
 Note, that I was unable to get Nuitrack to run with ROS1, because of a Boost library conflict (probably solvable for someone more knowledgable with CMake), and I was unable to activate Nuitrack's license on a Docker container.
 
@@ -60,11 +69,11 @@ Note, that I was unable to get Nuitrack to run with ROS1, because of a Boost lib
 Running it
 ----------
 
-1. Make sure that you have ROS2 Dashing installed, if not, see [here](https://index.ros.org/doc/ros2/Installation/)
+1. Make sure that you have ROS2 Foxy installed, if not, see [here](https://index.ros.org/doc/ros2/Installation/)
 
 1. Source your ROS environment
 
-        source /opt/ros/dashing/setup.bash
+        source /opt/ros/foxy/setup.bash
 
 1. Make a ROS2 workspace (skip if you already have a ROS2 workspace that you'd like to use)
 
@@ -75,7 +84,7 @@ Running it
 1. Clone this repository into your ROS2 source directory.
 
         cd ~/ros2_ws/src
-        git clone https://github.com/audrow/ros2_nuitrack
+        git clone https://github.com/SpaceMaster85/ros2-nuitrack.git
 
 1. Change the `nuitrack_app/CMakeLists.txt` to point to your Nuitrack SDK includes folder (see line 8)
 
@@ -91,7 +100,7 @@ Running it
 To test that it works, use the following command `ros2 run nuitrack_app publisher`.  From another terminal, you can echo the topics to see that things are working okay, specifically:
 
     # In terminal 1
-    source /opt/ros/dashing/setup.bash
+    source /opt/ros/foxy/setup.bash
     source ~/ros2_ws/install/setup.bash
     ros2 run nuitrack_app publisher
     
