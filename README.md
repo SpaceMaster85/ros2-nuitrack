@@ -106,3 +106,7 @@ To test that it works, use the following command `ros2 run nuitrack_app publishe
     
     # In terminal 2
     ros2 topic echo /Skeletons
+    
+    
+Warning!
+Nuitrack Package installs its own (and very old) version of the libusb library! This can cause compiling issues when you compile something which needs a newer version of the libsub library. If you get compiling errors similar to "reference not found libusb_set_option" this may be the problem. I had it when I compiled rtabmap ros for ROS2.
