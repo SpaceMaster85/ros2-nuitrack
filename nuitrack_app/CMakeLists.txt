@@ -5,7 +5,7 @@ project(nuitrack_app)
 # Modify for your system
 # Download the SDK from here: 
 #   https://nuitrack.com/
-set(NUITRACK_SDK_INCLUDE_DIR ~/Developer/libs/Nuitrack/include)
+set(NUITRACK_SDK_INCLUDE_DIR ~/nuitrack-sdk/Nuitrack/include)
 ###
 
 # Default to C99
@@ -27,6 +27,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nuitrack_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 include_directories(
   ./include
@@ -34,11 +35,12 @@ include_directories(
 )
 link_directories("/usr/local/lib/nuitrack")
 
-add_executable(publisher src/main.cpp)
+add_executable(publisher src/main.cpp src/nuitrack_app.cpp)
 ament_target_dependencies(publisher 
     rclcpp 
-    std_msgs 
-    nuitrack_msgs)
+    std_msgs
+    nuitrack_msgs
+    sensor_msgs)
 target_link_libraries(publisher nuitrack)
 
 install(TARGETS

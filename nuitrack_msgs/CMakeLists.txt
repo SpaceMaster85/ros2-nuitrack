@@ -15,7 +15,7 @@ find_package(ament_cmake REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
-rosidl_generate_interfaces(pendulum_msgs
+rosidl_generate_interfaces(${PROJECT_NAME}
     "msg/FaceInfo.msg"
     "msg/Faces.msg"
     "msg/GestureInfo.msg"
@@ -25,7 +25,6 @@ rosidl_generate_interfaces(pendulum_msgs
     "msg/JointInfo.msg"
     "msg/SkeletonInfo.msg"
     "msg/Skeletons.msg"
-    #"srv/suspend.srv" # Doesn't compile for some reason
     DEPENDENCIES builtin_interfaces
 )
 

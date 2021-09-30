@@ -269,7 +269,7 @@ namespace parser
         }
 
         return j;
-    };
+    }
 }
 
 #endif // __PARSER__
